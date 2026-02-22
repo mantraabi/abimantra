@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import RichEditor from '@/components/shared/RichEditor.vue'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const router = useRouter()
@@ -123,14 +123,8 @@ const handleSubmit = async () => {
           </div>
 
           <div class="space-y-2">
-            <Label for="description">Deskripsi Detail</Label>
-            <Textarea 
-              id="description" 
-              v-model="description" 
-              placeholder="Jelaskan fitur, teknologi yang digunakan, dan cara instalasinya di sini..." 
-              rows="5"
-              required 
-            />
+            <Label for="content">Deskripsi Proyek</Label>
+            <RichEditor v-model="content" />
           </div>
 
           <div class="space-y-2">
