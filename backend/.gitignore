@@ -1,0 +1,7 @@
+node_modules/
+.env
+# Abaikan file upload agar server tidak berat dan aman
+public/uploads/projects/*
+!public/uploads/projects/.gitkeep
+public/uploads/thumbnails/*
+!public/uploads/thumbnails/.gitkeep
