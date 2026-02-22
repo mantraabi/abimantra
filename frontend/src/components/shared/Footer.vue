@@ -50,7 +50,7 @@ const currentYear = new Date().getFullYear()
       </div>
 
       <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-        <p>&copy; {{ currentYear }} MyPorto. All rights reserved.</p>
+        <p>&copy; {{ currentYear }} Abimantra. All rights reserved.</p>
         <p class="mt-2 md:mt-0">Built with Vue.js & Node.js</p>
       </div>
     </div>
