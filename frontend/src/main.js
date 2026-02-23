@@ -5,7 +5,7 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 import vue3GoogleLogin from 'vue3-google-login'
-import { createHead } from '@unhead/vue'
+import { createHead } from '@vueuse/head'
 
 const app = createApp(App)
 const head = createHead()
