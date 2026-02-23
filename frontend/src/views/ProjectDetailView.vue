@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { Button } from '@/components/ui/button'
-import { createHead } from '@vueuse/head'
+import { useHead } from '@vueuse/head'
 
 const route = useRoute()
 const router = useRouter()
