@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { Button } from '@/components/ui/button'
+import { useHead } from '@unhead/vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -11,6 +12,23 @@ const backendURL = import.meta.env.VITE_BACKEND_URL
 const project = ref(null)
 const isLoading = ref(true)
 const downloadingId = ref(null)
+
+useHead({
+  title: () => project.value ? `${project.value.title} | Portofolio` : 'Memuat Proyek...',
+  meta: [
+    {
+      name: 'description',
+      content: () => project.value ? project.value.description.substring(0, 150) + '...' : 'Detail proyek portofolio.'
+    },
+    // ==========================================
+    // OPEN GRAPH (Untuk Share WhatsApp / LinkedIn / Facebook)
+    // ==========================================
+    { property: 'og:title', content: () => project.value?.title },
+    { property: 'og:description', content: () => project.value ? project.value.description.substring(0, 150) : '' },
+    { property: 'og:image', content: () => project.value ? `${backendURL}${project.value.thumbnail_url}` : '' },
+    { property: 'og:type', content: 'website' }
+  ]
+})
 
 // Ambil data proyek berdasarkan slug dari URL & Set SEO
 const fetchProjectDetail = async () => {
