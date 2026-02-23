@@ -51,7 +51,7 @@ const handleSubmit = async () => {
   formData.append('slug', slug.value)
   formData.append('description', description.value)
   formData.append('demo_url', demoUrl.value)
-  formData.append('is_published', 'true')
+  formData.append('is_published', is_published.value)
   formData.append('category', category.value)
   
   // Masukkan file jika ada
@@ -119,7 +119,20 @@ const handleSubmit = async () => {
                 </SelectContent>
               </Select>
             </div>
-            
+            <div class="grid gap-2 mb-4">
+              <Label for="is_published">Status Publikasi</Label>
+              <select 
+                id="is_published" 
+                v-model="is_published" 
+                class="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2"
+              >
+                <option :value="false">Draft</option>
+                <option :value="true">Publish</option>
+              </select>
+              <p class="text-xs text-slate-500">
+                Proyek "Draft" hanya bisa dilihat oleh Admin di halaman ini.
+              </p>
+            </div>
           </div>
 
           <div class="space-y-2">

@@ -1,3 +1,5 @@
+// AdminProjectListView.vue
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
@@ -11,7 +13,8 @@ const backendURL = import.meta.env.VITE_BACKEND_URL
 
 const fetchProjects = async () => {
   try {
-    const response = await axios.get(`${backendURL}/api/projects`)
+    // PERBAIKAN 1: Tambahkan ?admin=true agar mengambil semua data termasuk Draft
+    const response = await axios.get(`${backendURL}/api/projects?admin=true`)
     projects.value = response.data
   } catch (error) {
     console.error("Gagal mengambil data proyek:", error)
@@ -61,23 +64,34 @@ onMounted(() => {
             <TableHead class="w-[50px]">No</TableHead>
             <TableHead>Judul Proyek</TableHead>
             <TableHead>Slug (URL)</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Tanggal Dibuat</TableHead>
             <TableHead class="text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow v-if="isLoading">
-            <TableCell colspan="5" class="text-center py-8 text-slate-500">Memuat data...</TableCell>
+            <TableCell colspan="6" class="text-center py-8 text-slate-500">Memuat data...</TableCell>
           </TableRow>
           
           <TableRow v-else-if="projects.length === 0">
-            <TableCell colspan="5" class="text-center py-8 text-slate-500">Belum ada proyek. Silakan tambah baru.</TableCell>
+            <TableCell colspan="6" class="text-center py-8 text-slate-500">Belum ada proyek. Silakan tambah baru.</TableCell>
           </TableRow>
 
           <TableRow v-for="(project, index) in projects" :key="project.id">
             <TableCell class="font-medium">{{ index + 1 }}</TableCell>
             <TableCell>{{ project.title }}</TableCell>
             <TableCell class="text-slate-500">{{ project.slug }}</TableCell>
+            
+            <TableCell>
+              <span v-if="project.is_published === 1 || project.is_published === true" class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                Published
+              </span>
+              <span v-else class="px-2 py-1 text-xs font-semibold text-slate-700 bg-slate-100 rounded-full">
+                Draft
+              </span>
+            </TableCell>
+
             <TableCell>{{ new Date(project.created_at).toLocaleDateString('id-ID') }}</TableCell>
             <TableCell class="text-right space-x-2">
               <RouterLink :to="`/admin/project/edit/${project.slug}`">

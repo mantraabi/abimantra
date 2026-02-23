@@ -3,13 +3,22 @@ const db = require('../config/db');
 const path = require('path');
 const fs = require('fs');
 
-// 1. Tampilkan semua proyek (Untuk Publik)
+// 1. Tampilkan proyek (Bisa untuk Publik & Admin)
 exports.getAllProjects = async (req, res) => {
     try {
-        // PERBAIKAN: Tambahkan 'category' di dalam SELECT
-        const [projects] = await db.execute(
-            'SELECT id, title, slug, description, thumbnail_url, demo_url, is_published, category, created_at FROM projects WHERE is_published = true'
-        );
+        // Jika frontend mengirim query ?admin=true, ambil semua proyek (termasuk Draft)
+        // Jika tidak, hanya ambil proyek yang is_published = true (Untuk pengunjung publik)
+        const isAdminRequest = req.query.admin === 'true';
+        
+        let sqlQuery = 'SELECT id, title, slug, description, thumbnail_url, demo_url, is_published, category, created_at FROM projects';
+        
+        if (!isAdminRequest) {
+            sqlQuery += ' WHERE is_published = true';
+        }
+        
+        sqlQuery += ' ORDER BY created_at DESC'; // Urutkan dari yang terbaru
+
+        const [projects] = await db.execute(sqlQuery);
         res.json(projects);
     } catch (error) {
         console.error(error);
@@ -33,9 +42,9 @@ exports.createProject = async (req, res) => {
     }
 
     try {
-        const publishedStatus = is_published === 'true' || is_published === '1';
+        // Mengubah input teks dari form (true/false) menjadi tipe boolean sesungguhnya
+        const publishedStatus = is_published === 'true' || is_published === '1' || is_published === true;
 
-        // PERBAIKAN: Jumlah kolom (8), tanda tanya (8), dan nilai array (8) sekarang sudah sinkron!
         await db.execute(
             'INSERT INTO projects (title, slug, description, thumbnail_url, demo_url, file_path, is_published, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [title, slug, description, thumbnail_url, demo_url, file_path, publishedStatus, category || 'Uncategorized']
@@ -88,14 +97,15 @@ exports.downloadProject = async (req, res) => {
 // 4. Detail Proyek berdasarkan Slug (Untuk Publik)
 exports.getProjectBySlug = async (req, res) => {
     try {
-        // PERBAIKAN: Tambahkan 'category' di dalam SELECT
         const [projects] = await db.execute(
             'SELECT id, title, slug, description, thumbnail_url, demo_url, is_published, category, created_at FROM projects WHERE slug = ?',
             [req.params.slug]
         );
+        
         if (projects.length === 0) return res.status(404).json({ message: 'Proyek tidak ditemukan' });
         res.json(projects[0]);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Terjadi kesalahan server.' });
     }
 };
@@ -111,7 +121,9 @@ exports.updateProject = async (req, res) => {
 
         let thumbnail_url = oldData[0].thumbnail_url;
         let file_path = oldData[0].file_path;
-        const publishedStatus = is_published === 'true' || is_published === '1';
+        
+        // Memastikan tipe datanya boolean
+        const publishedStatus = is_published === 'true' || is_published === '1' || is_published === true;
 
         if (req.files && req.files.thumbnail) {
             thumbnail_url = `/uploads/thumbnails/${req.files.thumbnail[0].filename}`;
@@ -120,7 +132,6 @@ exports.updateProject = async (req, res) => {
             file_path = req.files.project_file[0].filename;
         }
 
-        // PERBAIKAN: Menggunakan `category` dari input form (jika ada), kalau tidak ada baru pakai data lama
         const finalCategory = category || oldData[0].category || 'Uncategorized';
 
         await db.execute(
@@ -129,6 +140,7 @@ exports.updateProject = async (req, res) => {
         );
         res.json({ message: 'Proyek berhasil diperbarui!' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Gagal memperbarui proyek.' });
     }
 };

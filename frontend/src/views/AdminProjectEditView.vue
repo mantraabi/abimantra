@@ -22,6 +22,7 @@ const description = ref('')
 const demoUrl = ref('')
 const oldThumbnail = ref('')
 const category = ref('')
+const is_published = ref(false)
 
 // State file baru (jika ingin diganti)
 const thumbnailFile = ref(null)
@@ -71,7 +72,7 @@ const handleSubmit = async () => {
   formData.append('slug', slug.value)
   formData.append('description', description.value)
   formData.append('demo_url', demoUrl.value)
-  formData.append('is_published', 'true')
+  formData.append('is_published', is_published.value)
     formData.append('category', category.value)
   
   // Hanya tambahkan file ke FormData JIKA admin mengupload file baru
@@ -134,6 +135,17 @@ onMounted(() => fetchProjectData())
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            </div>
+            <div class="grid gap-2 mb-4">
+              <Label for="is_published">Status Publikasi</Label>
+              <select 
+                id="is_published" 
+                v-model="is_published" 
+                class="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2"
+              >
+                <option :value="false">Draft</option>
+                <option :value="true">Publish</option>
+              </select>
             </div>
           </div>
 

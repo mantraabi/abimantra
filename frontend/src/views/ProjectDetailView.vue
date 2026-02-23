@@ -21,7 +21,7 @@ const fetchProjectDetail = async () => {
     // ==========================================
     // LOGIKA SEO
     // ==========================================
-    document.title = `${project.value.title} | MyPorto.`
+    document.title = `${project.value.title} | Abimantra.`
 
     let metaDescription = document.querySelector('meta[name="description"]')
     if (!metaDescription) {
